@@ -1,0 +1,9 @@
+*.ilk
+*.pdb
+moc_*.cpp
+ui_*.h
+Makefile
+*.stash
+*.obj
+*.apk
+*.exe
