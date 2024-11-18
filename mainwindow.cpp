@@ -3,10 +3,10 @@
 #include <QFile>
 #include <QTextStream>
 #include <QCryptographicHash>
-#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
+
     ui->setupUi(this);
 
     QString filePath = "../../../../../transactions.csv";
@@ -21,7 +21,6 @@ MainWindow::~MainWindow() {
 void MainWindow::loadTransactions(const QString &filePath) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Ошибка", "Не удалось открыть файл с данными!");
         return;
     }
 
@@ -37,7 +36,6 @@ void MainWindow::loadTransactions(const QString &filePath) {
         QString computedHash = computeHash(transaction, previousHash);
 
         if (transaction.hash != computedHash) {
-            QMessageBox::warning(this, "Ошибка", "Нарушение целостности данных!");
             continue;
         }
 
