@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QCryptographicHash>
+#include <QInputDialog>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -63,3 +65,40 @@ void MainWindow::displayTransactions() {
 
     ui->textEdit->setPlainText(content);
 }
+
+void MainWindow::on_pushButtonPin_clicked() {
+    bool ok;
+    QString newPin = QInputDialog::getText(this, "Смена пин-кода",
+                                           "Введите новый пин-код:", QLineEdit::Password,
+                                           "", &ok);
+    if (ok && !newPin.isEmpty()) {
+        QByteArray newPinHash = QCryptographicHash::hash(newPin.toUtf8(), QCryptographicHash::Sha256);
+        if (savePinHash(newPinHash)) {
+            QDialog successDialog(this);
+            QLabel *label = new QLabel("Пин-код успешно обновлён!", &successDialog);
+            QVBoxLayout *layout = new QVBoxLayout(&successDialog);
+            layout->addWidget(label);
+            successDialog.setLayout(layout);
+            successDialog.exec();
+        } else {
+            QDialog successDialog(this);
+            QLabel *label = new QLabel("Ошибка: Не удалось сохранить новый пин-код.", &successDialog);
+            QVBoxLayout *layout = new QVBoxLayout(&successDialog);
+            layout->addWidget(label);
+            successDialog.setLayout(layout);
+            successDialog.exec();
+        }
+    }
+}
+
+bool MainWindow::savePinHash(const QByteArray &hash) {
+    QFile file("../../../../../pin.txt");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+    QTextStream out(&file);
+    out << hash.toHex();
+    file.close();
+    return true;
+}
+

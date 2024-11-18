@@ -25,7 +25,7 @@ private:
     bool authenticated;
     QString hashPin(const QString &pin) const;
 
-    const QString storedPinHash = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"; //SHA-256
+    QString loadPinHash();
 };
 
 #endif // AUTH_H

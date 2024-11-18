@@ -23,6 +23,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_pushButtonPin_clicked();
+
 private:
     Ui::MainWindow *ui;
     QVector<Transaction> transactions;
@@ -30,6 +33,8 @@ private:
     void loadTransactions(const QString &filePath);
     QString computeHash(const Transaction &transaction, const QString &previousHash = "");
     void displayTransactions();
+
+    bool savePinHash(const QByteArray &hash);
 };
 
 #endif // MAINWINDOW_H
