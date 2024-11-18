@@ -28,6 +28,7 @@ void MainWindow::loadTransactions(const QString &filePath) {
 
     QTextStream in(&file);
     QString previousHash;
+    bool flag = false;
     while (!in.atEnd()) {
         QString line = in.readLine();
         QStringList fields = line.split(',');
@@ -38,9 +39,9 @@ void MainWindow::loadTransactions(const QString &filePath) {
         QString computedHash = computeHash(transaction, previousHash);
 
         if (transaction.hash != computedHash) {
-            continue;
+            flag = true;
         }
-
+        transactionErrors.append(flag);
         transactions.append(transaction);
         previousHash = computedHash;
     }
@@ -55,15 +56,26 @@ QString MainWindow::computeHash(const Transaction &transaction, const QString &p
 
 void MainWindow::displayTransactions() {
     QString content;
-    for (const auto &transaction : transactions) {
-        content += QString("Карта: %1\nМаршрут: %2\nВремя: %3\nХеш: %4\n\n")
-                       .arg(transaction.cardNumber)
-                       .arg(transaction.route)
-                       .arg(transaction.time)
-                       .arg(transaction.hash);
+    for (int i = 0; i < transactions.size(); ++i) {
+        const auto &transaction = transactions[i];
+        bool hasError = transactionErrors[i];
+
+        if (hasError) {
+            content += QString("<p style='color: red;'>Карта: %1<br>Маршрут: %2<br>Время: %3<br>Хеш: %4</p>")
+                           .arg(transaction.cardNumber)
+                           .arg(transaction.route)
+                           .arg(transaction.time)
+                           .arg(transaction.hash);
+        } else {
+            content += QString("<p>Карта: %1<br>Маршрут: %2<br>Время: %3<br>Хеш: %4</p>")
+                           .arg(transaction.cardNumber)
+                           .arg(transaction.route)
+                           .arg(transaction.time)
+                           .arg(transaction.hash);
+        }
     }
 
-    ui->textEdit->setPlainText(content);
+    ui->textEdit->setHtml(content);
 }
 
 void MainWindow::on_pushButtonPin_clicked() {

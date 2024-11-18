@@ -29,6 +29,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QVector<Transaction> transactions;
+    QVector<bool> transactionErrors; // Ошибки для каждой транзакции
 
     void loadTransactions(const QString &filePath);
     QString computeHash(const Transaction &transaction, const QString &previousHash = "");
