@@ -7,3 +7,4 @@ Makefile
 *.obj
 *.apk
 *.exe
+build
