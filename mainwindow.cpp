@@ -5,6 +5,7 @@
 #include <QCryptographicHash>
 #include <QInputDialog>
 #include <QLabel>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -18,9 +19,11 @@ MainWindow::MainWindow(QWidget *parent)
     displayTransactions();
 }
 
+
 MainWindow::~MainWindow() {
     delete ui;
 }
+
 
 void MainWindow::loadTransactions(const QString &filePath) {
     QFile file(filePath);
@@ -51,10 +54,12 @@ void MainWindow::loadTransactions(const QString &filePath) {
     file.close();
 }
 
+
 QString MainWindow::computeHash(const Transaction &transaction, const QString &previousHash) {
     QString data = transaction.cardNumber + transaction.route + transaction.time + previousHash;
     return QCryptographicHash::hash(data.toUtf8(), QCryptographicHash::Md5).toHex();
 }
+
 
 void MainWindow::displayTransactions() {
     QString content;
@@ -79,6 +84,7 @@ void MainWindow::displayTransactions() {
 
     ui->textEdit->setHtml(content);
 }
+
 
 void MainWindow::on_pushButtonPin_clicked() {
     bool ok;
@@ -105,6 +111,7 @@ void MainWindow::on_pushButtonPin_clicked() {
     }
 }
 
+
 bool MainWindow::savePinHash(const QByteArray &hash) {
     QFile file("../../../../../pin.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -116,3 +123,13 @@ bool MainWindow::savePinHash(const QByteArray &hash) {
     return true;
 }
 
+
+void MainWindow::on_pushButtonFile_clicked() {
+    QString filePath = QFileDialog::getOpenFileName(this, "Открыть файл", "", "CSV Files (*.csv);;All Files (*)");
+    if (!filePath.isEmpty()) {
+        transactions.clear();
+        transactionErrors.clear();
+        loadTransactions(filePath);
+        displayTransactions();
+    }
+}
