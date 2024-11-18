@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
+    this->setWindowTitle("221_3210_Alexeev");
+
     QString filePath = "../../../../../transactions.csv";
     loadTransactions(filePath);
     displayTransactions();
